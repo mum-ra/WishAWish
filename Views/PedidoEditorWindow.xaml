@@ -1,0 +1,85 @@
+<Window x:Class="WishAWish.Views.PedidoEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:WishAWish.ViewModels"
+        xmlns:m="clr-namespace:WishAWish.Models;assembly=WishAWish"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Novo Pedido" Height="540" Width="800" WindowStartupLocation="CenterOwner">
+
+    <!-- design-time apenas (não instancia nada em runtime) -->
+    <d:Window.DataContext>
+        <d:DesignInstance Type="{x:Type vm:PedidoEditorViewModel}" IsDesignTimeCreatable="False"/>
+    </d:Window.DataContext>
+
+    <Window.Resources>
+        <!-- Enum -> ItemsSource -->
+        <ObjectDataProvider x:Key="FormaPagamentoValues"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="m:FormaPagamento"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Pessoa -->
+        <TextBlock Text="{Binding Pessoa.Nome}" FontWeight="Bold" FontSize="16" Margin="0 0 0 10"/>
+
+        <!-- Adição de itens -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0 0 0 10">
+            <ComboBox Width="280" ItemsSource="{Binding Produtos}"
+                      SelectedItem="{Binding ProdutoSel}" DisplayMemberPath="Nome" />
+            <TextBox Width="80" Margin="10,0,10,0" Text="{Binding Quantidade}"/>
+            <Button Content="Adicionar" Command="{Binding AdicionarItemCmd}"/>
+        </StackPanel>
+
+        <!-- Itens -->
+        <DataGrid Grid.Row="2" 
+                  ItemsSource="{Binding Itens}" 
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  SelectionMode="Single"
+                  SelectionUnit="FullRow"
+                  >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Produto"  Binding="{Binding ProdutoNome}" Width="*"/>
+                <DataGridTextColumn Header="Valor"    Binding="{Binding ValorUnitario, StringFormat=\{0:C2\}}" Width="120"/>
+                <DataGridTextColumn Header="Qtd"      Binding="{Binding Quantidade}" Width="80"/>
+                <DataGridTextColumn Header="Subtotal" Binding="{Binding Subtotal, StringFormat=\{0:C2\}}" Width="120"/>
+                <DataGridTemplateColumn Header="Ações" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Remover"
+                                    Command="{Binding DataContext.RemoverItemCmd, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding ProdutoId}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Fechamento -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 10 0 0">
+            <TextBlock Text="Forma de Pagamento:" VerticalAlignment="Center" Margin="0 0 6 0"/>
+            <ComboBox Width="150"
+                      SelectedItem="{Binding Forma}"
+                      ItemsSource="{Binding Source={StaticResource FormaPagamentoValues}}"/>
+            <TextBlock Text="{Binding Total, StringFormat='  Total: {0:C2}'}"
+                       FontWeight="Bold" Margin="20 0 20 0" VerticalAlignment="Center"/>
+            <Button Content="Finalizar" Command="{Binding FinalizarCmd}"/>
+        </StackPanel>
+    </Grid>
+</Window>

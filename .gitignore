@@ -1,0 +1,43 @@
+# Build temporários
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+*.log
+
+# Configurações do Visual Studio (locais)
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Arquivos de build
+*.dll
+*.exe
+*.pdb
+*.cache
+*.mdb
+
+# Publicações temporárias
+publish/
+*.publish.xml
+
+# Arquivos do NuGet
+*.nupkg
+**/packages/*
+!**/packages/build/
+.nuget/
+
+# Arquivos de sistema
+[Tt]humbs.db
+[Dd]esktop.ini
+
+# Backup e temporários
+*~
+*.tmp
+*.bak
+*.old
+
+# Configurações específicas de IDEs
+.idea/
+*.iml

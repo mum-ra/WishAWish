@@ -1,0 +1,146 @@
+<UserControl x:Class="WishAWish.Views.PessoasView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:WishAWish.ViewModels">
+    <UserControl.DataContext>
+        <vm:PessoasViewModel/>
+    </UserControl.DataContext>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0 0 0 10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Style="{StaticResource Card}" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,378,2">
+                <WrapPanel>
+                    <Grid Height="18" VerticalAlignment="Center" Width="261">
+                        <TextBlock Text="Nome:" VerticalAlignment="Center" Margin="0,0,226,0"/>
+                        <TextBox Margin="41,0,0,0"
+                            Text="{Binding FiltroNome, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                    <Grid Height="18" VerticalAlignment="Center" Width="179">
+                        <TextBlock Text="CPF:" VerticalAlignment="Center" Margin="9,0,147,0"/>
+                        <TextBox Margin="38,0,-9,0"
+                            Text="{Binding FiltroCpf, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+                </WrapPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Grid.Column="1" Margin="10,0,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource ToolbarButton}" Content="Novo"    Command="{Binding NovoCmd}"/>
+                    <Button Style="{StaticResource ToolbarButton}" Content="Salvar"  Command="{Binding SalvarCmd}"/>
+                    <Button Style="{StaticResource ToolbarButton}" Content="Excluir" Command="{Binding ExcluirCmd}"/>
+                    <Button Content="Incluir Pedido" Command="{Binding IncluirPedidoCmd}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="1" Style="{StaticResource Card}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Nome:" Margin="0 0 6 6" VerticalAlignment="Center"/>
+                <TextBox   Grid.Row="0" Grid.Column="1" Margin="0 0 0 6"
+                           Text="{Binding Selecionada.Nome, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Grid.Row="1" Text="CPF:" Margin="0 0 6 6" VerticalAlignment="Center"/>
+                <Rectangle Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=WrapPanel}}" Height="0"/>
+                <TextBox   Grid.Row="1" Grid.Column="1" Margin="0 0 0 6"
+                           Text="{Binding Selecionada.Cpf, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Grid.Row="2" Text="Endereço:" Margin="0 0 6 0" VerticalAlignment="Center"/>
+                <TextBox   Grid.Row="2" Grid.Column="1"
+                           Text="{Binding Selecionada.Endereco, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Style="{StaticResource Card}">
+            <DataGrid ItemsSource="{Binding PessoasView}"
+                      SelectedItem="{Binding Selecionada}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" Width="60"/>
+                    <DataGridTextColumn Header="Nome" Binding="{Binding Nome}" Width="*"/>
+                    <DataGridTextColumn Header="CPF"  Binding="{Binding Cpf}"  Width="150"/>
+                    <DataGridTextColumn Header="Endereço" Binding="{Binding Endereco}" Width="2*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <GroupBox Grid.Row="3" Header="Pedidos da Pessoa" Margin="0 10 0 0">
+            <Grid Margin="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal" Margin="0 0 0 8">
+                    <CheckBox Content="Apenas Entregues" IsChecked="{Binding MostrarEntregues}" Margin="0,0,12,0"/>
+                    <CheckBox Content="Apenas Pagos"     IsChecked="{Binding MostrarPagos}"     Margin="0,0,12,0"/>
+                    <CheckBox Content="Apenas Pendentes" IsChecked="{Binding MostrarPendentes}"/>
+                </StackPanel>
+
+                <DataGrid Grid.Row="1"
+                          ItemsSource="{Binding PedidosDaPessoaView}"
+                          AutoGenerateColumns="False" 
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Data da Venda"
+                                            Binding="{Binding DataVenda, StringFormat=\{0:dd/MM/yyyy HH:mm\}}"
+                                            Width="160"/>
+                        <DataGridTextColumn Header="Valor Total"
+                                            Binding="{Binding ValorTotal, StringFormat=\{0:C2\}}"
+                                            Width="120"/>
+                        <DataGridTextColumn Header="Forma de Pagamento"
+                                            Binding="{Binding FormaPagamento}" Width="160"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="120"/>
+                        <DataGridTemplateColumn Header="Ações" Width="260">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Content="Pago"
+                                                Command="{Binding DataContext.MarcarPagoPessoaCmd, RelativeSource={RelativeSource AncestorType=GroupBox}}"
+                                                CommandParameter="{Binding}" Margin="0 0 6 0"/>
+                                        <Button Content="Enviado"
+                                                Command="{Binding DataContext.MarcarEnviadoPessoaCmd, RelativeSource={RelativeSource AncestorType=GroupBox}}"
+                                                CommandParameter="{Binding}" Margin="0 0 6 0"/>
+                                        <Button Content="Recebido"
+                                                Command="{Binding DataContext.MarcarRecebidoPessoaCmd, RelativeSource={RelativeSource AncestorType=GroupBox}}"
+                                                CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>
